@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}
+.home{display:inline-block;margin:14px 0 0;font:500 .85rem/1 system-ui,sans-serif;text-decoration:none;color:inherit;opacity:.7}.home:hover{opacity:1}</style>
+<meta name="description" content="Six field cards for the Canon R50 and M50: when to leave Auto and what to set.">
+<title>R50 / M50 Field Cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one narrow column of pocket cards, each = situation, an LCD-style settings readout, the evidence from Pete's own shots. */
+:root{
+  --bg:#eef1f4; --card:#ffffff; --fg:#141a21; --muted:#5a6573; --line:#d7dde4;
+  --lcd:#1b2128; --lcd-fg:#e9f0e6; --lcd-dim:#8f9a8c;
+  --accent:#d8442b; --accent-soft:#fbe6e1; --ok:#2f7d4f;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1317; --card:#171d23; --fg:#e8edf2; --muted:#9aa6b3; --line:#2a333d;
+  --lcd:#070a0d; --lcd-fg:#dff0d6; --lcd-dim:#7f8f7a;
+  --accent:#ff6a4d; --accent-soft:#3a1d17; --ok:#5cc289; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1317; --card:#171d23; --fg:#e8edf2; --muted:#9aa6b3; --line:#2a333d;
+  --lcd:#070a0d; --lcd-fg:#dff0d6; --lcd-dim:#7f8f7a;
+  --accent:#ff6a4d; --accent-soft:#3a1d17; --ok:#5cc289; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header h1{font:700 2.1rem/1 var(--display);letter-spacing:.01em;margin:0;text-wrap:balance}
+header p{margin:6px 0 0;color:var(--muted);font-size:.9rem}
+.eyebrow{font:600 .72rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-margin-top:12px}
+.card h2{font:700 1.55rem/1.05 var(--display);margin:0;text-wrap:balance}
+.when{color:var(--muted);font-size:.88rem;margin:-6px 0 0}
+.lcd{background:var(--lcd);color:var(--lcd-fg);border-radius:10px;padding:12px 14px;font-family:var(--mono);display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline}
+.lcd .v{font-weight:700;font-size:1.35rem;letter-spacing:.02em}
+.lcd .k{display:block;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--lcd-dim)}
+ul.do{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px}
+ul.do li{padding-left:22px;position:relative}
+ul.do li::before{content:"";position:absolute;left:4px;top:.55em;width:8px;height:8px;border-radius:2px;background:var(--accent)}
+.why{background:var(--accent-soft);border-radius:10px;padding:10px 12px;font-size:.86rem}
+.why b{font-variant-numeric:tabular-nums}
+.tablebox{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:.8rem;font-variant-numeric:tabular-nums}
+th,td{padding:5px 6px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:500;white-space:nowrap}
+tr.bad td{color:var(--accent)} tr.good td{color:var(--ok);font-weight:700}
+.note{font-size:.78rem;color:var(--muted);margin:0}
+.glance{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:.9rem;align-items:baseline}
+.glance dt{font-weight:600}
+.glance dd{margin:0;font-family:var(--mono);font-size:.82rem}
+nav{display:flex;flex-wrap:wrap;gap:8px}
+nav a{font:500 .82rem/1 var(--body);color:var(--fg);text-decoration:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 12px}
+nav a:focus-visible,nav a:hover{border-color:var(--accent);outline:none}
+ol.pre{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+footer{font-size:.78rem;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+footer p{margin:0}
+</style>
+</head>
+<body>
+<div style="max-width:640px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))"><a class="home" href="/">&larr; All field guides</a></div>
+
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Canon R50 · M50 · from your Nov 10–18 shots</div>
+  <h1>Field cards</h1>
+  <p>Built from the postmortem of your 171 recent shots. Every one was taken in full Auto with exposure compensation at 0. These cards are the fixes for what that caused.</p>
+</header>
+
+<nav aria-label="Jump to card">
+  <a href="#before">Before you shoot</a><a href="#close">Up close</a><a href="#dim">Dim room</a><a href="#light">Tricky light</a><a href="#people">People</a><a href="#raw">Hard light</a>
+</nav>
+
+<section class="card" id="glance">
+  <div class="eyebrow">One glance</div>
+  <dl class="glance">
+    <dt>Always</dt><dd>Av, not Auto</dd>
+    <dt>Under 1.5 m</dt><dd>Spot AF · f/4–5.6</dd>
+    <dt>Dim room</dt><dd>35mm at f/1.8</dd>
+    <dt>Bright behind</dt><dd>EV +2/3 to +1</dd>
+    <dt>Dark or spotlit</dt><dd>EV −2/3 to −1</dd>
+    <dt>People</dt><dd>2–3 frames</dd>
+    <dt>Hard light</dt><dd>RAW on, then off</dd>
+  </dl>
+</section>
+
+<section class="card" id="before">
+  <div class="eyebrow">Card 1</div>
+  <h2>Before the first shot</h2>
+  <div class="lcd"><span><span class="k">Mode</span><span class="v">Av</span></span><span><span class="k">EV</span><span class="v">±0 → decide</span></span><span><span class="k">Quality</span><span class="v">JPEG</span></span></div>
+  <ol class="pre">
+    <li>Turn the mode dial to <b>Av</b>. Auto hid every choice below.</li>
+    <li>Look at the light and decide on exposure compensation now (card 4).</li>
+    <li>Subject within arm's length? Set the focus area to a single small point (card 2).</li>
+    <li>Leave quality on JPEG unless the light is harsh (card 6).</li>
+  </ol>
+  <div class="why">All <b>171</b> shots were full Auto: EV <b>0</b> every time, focus picked from the whole frame.</div>
+</section>
+
+<section class="card" id="close">
+  <div class="eyebrow">Card 2 · Blur</div>
+  <h2>Up close, under 1.5 m</h2>
+  <p class="when">Food, kids at the table, pets, details.</p>
+  <div class="lcd"><span><span class="k">Mode</span><span class="v">Av</span></span><span><span class="k">Aperture</span><span class="v">f/4–5.6</span></span><span><span class="k">AF area</span><span class="v">Spot</span></span></div>
+  <ul class="do">
+    <li>AF area: <b>Spot AF</b> on the R50, <b>1-point AF</b> on the M50. Put it on the eye or the edge that matters.</li>
+    <li>Stop down to <b>f/4</b>, or <b>f/5.6</b> under 1 m.</li>
+    <li>Close <i>and</i> dim? Take a step back to about 1.5 m and shoot f/2.8, or stay close at f/4 and accept the higher ISO. Sharp and grainy beats clean and blurry.</li>
+  </ul>
+  <div class="why"><b>27</b> of your <b>31</b> blurry shots were focused closer than 1.5 m, mostly at f/2.8.</div>
+  <div class="tablebox">
+    <table aria-label="Depth of field for a 35mm lens on APS-C">
+      <thead><tr><th>In focus (cm)</th><th>0.5 m</th><th>1 m</th><th>1.5 m</th></tr></thead>
+      <tbody>
+        <tr><td>f/1.8</td><td>1.3</td><td>5.4</td><td>12</td></tr>
+        <tr class="bad"><td>f/2.8 (what Auto chose)</td><td>2.0</td><td>8.4</td><td>19</td></tr>
+        <tr class="good"><td>f/4</td><td>2.9</td><td>12</td><td>28</td></tr>
+        <tr class="good"><td>f/5.6</td><td>4.0</td><td>17</td><td>39</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">35mm lens on the R50/M50 sensor (APS-C), standard 0.019 mm blur circle. At 1 m and f/2.8 only about 8 cm front to back is sharp, so a nose can be sharp while the eyes are not.</p>
+</section>
+
+<section class="card" id="dim">
+  <div class="eyebrow">Card 3 · Noise</div>
+  <h2>Dim room</h2>
+  <p class="when">Restaurants, living room at night, indoor events.</p>
+  <div class="lcd"><span><span class="k">Mode</span><span class="v">Av</span></span><span><span class="k">Lens</span><span class="v">35mm</span></span><span><span class="k">Aperture</span><span class="v">f/1.8</span></span></div>
+  <ul class="do">
+    <li>Put on the <b>35mm f/1.8</b> and open it all the way to <b>f/1.8</b>.</li>
+    <li>Let ISO float. Opening up is what brings it down.</li>
+    <li>Subject under 1.5 m? Card 2 wins: focus first.</li>
+  </ul>
+  <div class="why"><b>34</b> shots were ISO 2000 or higher, up to <b>6400</b>, while Auto kept the 35mm at f/2.8. Going from f/2.8 to f/1.8 is <b>1.3 stops</b> more light: ISO 6400 becomes about <b>2500</b>.</div>
+</section>
+
+<section class="card" id="light">
+  <div class="eyebrow">Card 4 · Too dark or blown out</div>
+  <h2>Tricky light</h2>
+  <p class="when">Window behind someone, snow or sky, a spotlit face on a dark stage.</p>
+  <div class="lcd"><span><span class="k">Bright behind</span><span class="v">+2/3…+1</span></span><span><span class="k">Dark / spotlit</span><span class="v">−2/3…−1</span></span></div>
+  <ul class="do">
+    <li>Bright background making your subject a silhouette: dial <b>plus</b>.</li>
+    <li>Mostly dark scene, or a bright subject on black: dial <b>minus</b>.</li>
+    <li>Review the shot with highlight alert on. Blinking areas are gone for good in a JPEG: dial down a third and reshoot.</li>
+    <li>Set it back to ±0 when you move on.</li>
+  </ul>
+  <div class="why"><b>35</b> shots came out dark and <b>27</b> blown out. Exposure compensation was <b>0</b> on all of them, and JPEG left nothing to recover.</div>
+</section>
+
+<section class="card" id="people">
+  <div class="eyebrow">Card 5</div>
+  <h2>People</h2>
+  <p class="when">Anyone who can blink, turn or talk.</p>
+  <div class="lcd"><span><span class="k">Frames</span><span class="v">2–3</span></span><span><span class="k">AF</span><span class="v">on the eye</span></span></div>
+  <ul class="do">
+    <li>Take <b>2 to 3 frames</b> of every moment, not one.</li>
+    <li>Keep the AF point on the nearer eye (card 2 if close).</li>
+  </ul>
+  <div class="why">From the postmortem's habit list. A single frame of a person leaves no backup for a blink or a focus miss.</div>
+</section>
+
+<section class="card" id="raw">
+  <div class="eyebrow">Card 6</div>
+  <h2>Hard light only: RAW</h2>
+  <p class="when">Midday sun, strong backlight, mixed stage or neon light.</p>
+  <div class="lcd"><span><span class="k">Quality</span><span class="v">RAW+JPEG</span></span><span><span class="k">After</span><span class="v">back to JPEG</span></span></div>
+  <ul class="do">
+    <li>Switch to RAW (or RAW+JPEG) for that scene only.</li>
+    <li>Switch back when the light gets easy again.</li>
+  </ul>
+  <div class="why">RAW can rescue the dark and blown shots from card 4, but it costs several times the space.</div>
+</section>
+
+<footer>
+  <p><b>Where this comes from:</b> the Nov 20 camera-settings postmortem of 171 shots (158 R50, Nov 10–18; 13 M50, Nov 17–18). It read EXIF and pixel statistics only, so the cause behind each miss is a reading of the numbers, not a visual check.</p>
+  <p>Menu names can differ slightly by firmware; check each one on the camera once. The depth-of-field table is calculated, not measured.</p>
+  <p></p>
+</footer>
+</div>
+
+</body>
+</html>

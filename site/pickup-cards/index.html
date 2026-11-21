@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}
+.home{display:inline-block;margin:14px 0 0;font:500 .85rem/1 system-ui,sans-serif;text-decoration:none;color:inherit;opacity:.7}.home:hover{opacity:1}</style>
+<meta name="description" content="Tick-box checks to run before paying for a used item at a Marketplace pickup.">
+<title>Pickup Inspection Cards</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one inspection tag at a time, picked from a sticky row of item chips. Built for one hand at a curb. */
+:root {
+  --bg: #eef1f0;
+  --card: #ffffff;
+  --ink: #17232b;
+  --muted: #5a6870;
+  --line: #d3dbdc;
+  --accent: #0f6b74;
+  --accent-soft: #dcecee;
+  --stop: #b4232c;
+  --stop-soft: #fbe7e8;
+  --done: #2f7d3a;
+  --font-display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10171b; --card: #19232a; --ink: #e6eef0; --muted: #9aabb2; --line: #2c3a42;
+    --accent: #5cc3cc; --accent-soft: #173a40; --stop: #ff7a80; --stop-soft: #3a1c20; --done: #7fd18a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10171b; --card: #19232a; --ink: #e6eef0; --muted: #9aabb2; --line: #2c3a42;
+  --accent: #5cc3cc; --accent-soft: #173a40; --stop: #ff7a80; --stop-soft: #3a1c20; --done: #7fd18a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 16px/1.45 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 48px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 640px; margin: 0 auto; }
+header.top { padding-block: 18px 6px; }
+h1 { font: 700 1.6rem/1.1 var(--font-display); margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+.sub { color: var(--muted); margin: 4px 0 0; font-size: 0.9rem; }
+nav.chips {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--bg); padding-block: 10px;
+  display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+  margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  padding-inline: max(16px, env(safe-area-inset-left, 0px));
+}
+nav.chips::-webkit-scrollbar { display: none; }
+nav.chips a {
+  flex: 0 0 auto; text-decoration: none; color: var(--ink);
+  border: 1px solid var(--line); background: var(--card);
+  padding: 7px 12px; border-radius: 999px; font-size: 0.88rem; font-weight: 500; white-space: nowrap;
+}
+nav.chips a[aria-current="true"] { background: var(--accent); border-color: var(--accent); color: var(--card); }
+nav.chips a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.tag {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px 16px 16px; display: grid; gap: 16px; margin-top: 6px;
+}
+.tag-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.tag-head h2 { font: 700 1.35rem/1.15 var(--font-display); margin: 0; text-wrap: balance; }
+.count { font: 500 0.85rem var(--font-mono); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.count.all { color: var(--done); }
+.lede { margin: -8px 0 0; color: var(--muted); font-size: 0.93rem; }
+.stop { background: var(--stop-soft); border-radius: 10px; padding: 12px 14px; }
+.stop h3, .section h3 {
+  font: 600 0.75rem var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 6px;
+}
+.stop h3 { color: var(--stop); }
+.stop ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.section h3 { color: var(--accent); }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; }
+.checks li { border-top: 1px solid var(--line); }
+.checks li:first-child { border-top: 0; }
+.checks label { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; cursor: pointer; }
+.checks input { width: 22px; height: 22px; margin: 1px 0 0; flex: 0 0 auto; accent-color: var(--accent); }
+.checks span { min-width: 0; }
+.checks input:checked + span { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); }
+.checks b { font-weight: 600; }
+.how { display: block; color: var(--muted); font-size: 0.86rem; margin-top: 2px; }
+.checks input:checked + span .how { text-decoration: none; }
+.plain { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; border-top: 1px dashed var(--line); padding-top: 12px; }
+.foot small { color: var(--muted); }
+button.reset {
+  font: 500 0.88rem var(--font-body); color: var(--accent); background: var(--accent-soft);
+  border: 0; border-radius: 8px; padding: 8px 12px; cursor: pointer;
+}
+.deal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.deal label { display: grid; gap: 4px; font-size: 0.78rem; color: var(--muted); min-width: 0; }
+.deal input {
+  width: 100%; min-width: 0; font: 500 1rem var(--font-mono); padding: 8px; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-variant-numeric: tabular-nums;
+}
+.readout { margin: 8px 0 0; font: 500 0.92rem var(--font-mono); font-variant-numeric: tabular-nums; }
+.readout.good { color: var(--done); }
+.readout.bad { color: var(--stop); }
+.note { color: var(--muted); font-size: 0.82rem; margin-top: 18px; }
+@media (prefers-reduced-motion: no-preference) { .tag { animation: in .18s ease-out; } @keyframes in { from { transform: translateY(4px); opacity: .6; } } }
+</style>
+</head>
+<body>
+<div style="max-width:640px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))"><a class="home" href="/">&larr; All field guides</a></div>
+
+
+<div class="wrap">
+  <header class="top">
+    <h1>Pickup Inspection Cards</h1>
+    <p class="sub">Open the card for what you're buying. Check it off before any money moves.</p>
+  </header>
+  <nav class="chips" id="chips" aria-label="Item cards"></nav>
+  <main id="card"></main>
+  <p class="note">Ticks and numbers stay on this phone only. Tests listed here are things you can do in 10 to 15 minutes at a curb or a seller's door.</p>
+</div>
+
+<script>
+const CARDS = [
+  {
+    id: "before", chip: "Before you go", title: "Before you go",
+    lede: "Five minutes at home saves the trip.",
+    stop: [
+      "Seller won't say the exact model, generation or variant",
+      "Seller wants a deposit, a \"hold fee\" or payment before you meet",
+      "Seller wants to move off Messenger to text or email before you've seen the item",
+    ],
+    checks: [
+      ["Screenshot the listing", "Listings vanish after a sale. Keep the photos, price and description."],
+      ["Confirm the exact variant", "Mark I vs II, Gen 1 vs Gen 2, EF vs RF, cover-only vs cover plus hub. Ask for a photo of the model or serial label."],
+      ["Ask: \"Anything not working or ever repaired?\"", "Get the answer in Messenger, in writing."],
+      ["Pull comps and set a walk-away price", "Used p50 and p10 from eBay sold, plus MPB for lenses. Fill in the numbers below."],
+      ["Meet in daylight, in public", "A busy store front or lobby. For heavy items at a home, bring someone or tell someone where you are."],
+      ["Charge your phone and pack the kit for this item", "Each card lists what to bring."],
+    ],
+    deal: true,
+  },
+  {
+    id: "meet", chip: "At the meet", title: "At the meet: money and safety",
+    lede: "Applies to every pickup.",
+    stop: [
+      "Item doesn't match the listing photos or the variant you were told",
+      "Seller won't let you power it on or test it",
+      "Rushing you: \"other buyers waiting\", \"I only have a minute\"",
+      "Price changes upward once you arrive",
+    ],
+    checks: [
+      ["Run the item card first, pay last", "No money moves until every box on the item card is ticked."],
+      ["Re-price for anything you found", "A defect you found is a reason to offer less or walk. Your walk-away number doesn't move up."],
+      ["Pay cash, or Zelle or Venmo only once the item is in your hands", "Those payments can't be reversed, so they're fine after inspection and never before."],
+      ["Count out the exact amount", "Don't open a full wallet. Have the cash split before you arrive."],
+      ["Write a receipt line in Messenger", "\"Paid $___ for [model], serial ___, as is, on [date].\" Ask the seller to reply \"confirmed\"."],
+      ["Photograph the serial number", "Keep it with the receipt line."],
+    ],
+  },
+  {
+    id: "rf-lens", chip: "RF lens", title: "RF or RF-S lens (on the R50)",
+    lede: "Native mount. RF and RF-S both fit the R50 directly.",
+    bring: ["Your R50, charged, with a blank SD card", "Phone flashlight", "Microfiber cloth and blower"],
+    stop: [
+      "Fungus: thin branching threads or web shapes inside the glass",
+      "Haze or a milky glow across the elements under the flashlight",
+      "Autofocus grinds, hunts constantly, or gives an error on your R50",
+      "Dented filter thread or a cracked barrel (the lens was dropped)",
+      "It's EF-M. EF-M lenses can't mount or adapt to the R50",
+    ],
+    checks: [
+      ["Model on the barrel matches the listing", "Check version marks, like \"II\", \"IS\", \"STM\" or \"L\". The variant drives the price."],
+      ["Flashlight through the rear element", "Point it in from the back, look through the front. A few dust specks are normal. Threads, fog, rainbow edges or blotches are not."],
+      ["Front and rear glass: scratches and coating marks", "Tilt it in the light. Light cleaning marks are OK; deep scratches near the center are not."],
+      ["Mount on your R50 and test autofocus", "Near, far, near again. It should be quick and quiet with no clicks or grinding."],
+      ["Image stabilization works (IS lenses)", "Half-press and watch the viewfinder settle. A soft rattle with the camera off can be normal on IS lenses."],
+      ["Zoom and focus rings are smooth", "No sand-like grit, no tight spots, and the zoom doesn't creep when you point it down."],
+      ["Shoot a flat, detailed target wide open", "A brick wall or a building face. Zoom to 100% on the back screen. Both left and right edges should be about equally sharp; one soft side suggests a decentered lens."],
+      ["Close-focus shot and one stopped-down shot (f/11)", "Close focus should lock. At f/11, check for dark spots, which point to dust on the sensor or inside the lens."],
+      ["Mount screws present and contacts clean", "No missing screws, burned or scratched contacts. Caps and hood included if the listing said so."],
+    ],
+  },
+  {
+    id: "ef-lens", chip: "EF lens", title: "EF or EF-S lens (adapted)",
+    lede: "Fits the R50 through the Canon EF-EOS R adapter with full autofocus. Older EF lenses are where the deals are.",
+    bring: ["Your R50 and your EF-EOS R adapter", "Blank SD card, flashlight, cloth"],
+    stop: [
+      "Oil on the aperture blades (shiny or wet-looking blades)",
+      "Fungus or haze under the flashlight",
+      "Error 01 or \"communication\" errors on your body after cleaning the contacts once",
+      "It's EF-M, or a third-party lens that won't focus through your adapter",
+    ],
+    checks: [
+      ["Check the exact version", "Many EF lenses have Mark I, II and III versions with very different prices. Look for the Roman numeral and \"IS\"."],
+      ["Look at the aperture blades", "Look through the front. Blades should be dry and matte. Shoot at f/16 against a bright sky: the shot should come out normally exposed, not too bright."],
+      ["Flashlight test for fungus, haze and separation", "Same as the RF card: dust is fine, threads and fog are not."],
+      ["Mount on the adapter and test autofocus", "Near, far, near. Older USM lenses should still be fast. Grinding or slow hunting is a problem."],
+      ["Image stabilization works (IS lenses)", "Half-press and watch the view settle."],
+      ["Rings, switches and focus scale", "AF/MF switch and IS switch click cleanly. Rings turn smoothly."],
+      ["Shoot a flat target wide open and check both edges", "One soft side suggests decentering."],
+      ["Third-party lens? Confirm it focuses on your R50", "Some older Sigma and Tamron EF lenses misbehave on mirrorless bodies. Test it here, not at home."],
+    ],
+  },
+  {
+    id: "body", chip: "Camera body", title: "Camera body",
+    lede: "For a second body or an upgrade.",
+    bring: ["A lens that fits it and a blank SD card", "Phone flashlight", "Your own charged battery if it takes the same type"],
+    stop: [
+      "Scratches or marks on the sensor",
+      "Dead pixels or bright spots in every shot",
+      "Corrosion in the battery or card door (water damage)",
+      "Seller can't produce a battery or charger to test it",
+    ],
+    checks: [
+      ["Model and serial on the bottom plate match the listing", "Photograph the serial."],
+      ["Lens off: look at the sensor with the flashlight", "Dust is normal and cleanable. Scratches, smears that don't move, or chips are not."],
+      ["Take shots and review at 100%", "One at f/16 of the sky for dust spots, one dark shot with the cap on to look for hot pixels."],
+      ["Every button, dial and the touchscreen respond", "Spin each dial. Tap through the touch menu."],
+      ["Viewfinder, flip screen and hot shoe", "The screen hinge shouldn't be loose. Viewfinder should switch on when you raise it to your eye."],
+      ["Record 10 seconds of video and play it back", "Listen for audio. Check that the file opens."],
+      ["Card slot, battery door and ports are clean", "No green crust, no bent pins in the card slot."],
+      ["Ask about shutter count and how they know it", "Treat a number they can't show you as unknown."],
+    ],
+  },
+  {
+    id: "macbook", chip: "MacBook Pro", title: "MacBook Pro",
+    lede: "Your want is more than 36 GB of memory. Check it on the screen, not the listing.",
+    bring: ["Your USB-C charger and a USB-C cable or drive", "Phone with checkcoverage.apple.com open"],
+    stop: [
+      "Still signed in to the seller's Apple Account, or Find My is on",
+      "\"Remote Management\" or a company name appears during setup (it's a managed work laptop)",
+      "Seller won't erase it in front of you",
+      "Serial on the screen doesn't match the serial on the bottom case",
+    ],
+    checks: [
+      ["Apple menu > About This Mac", "Confirm the chip, memory (48, 64, 96 or 128 GB) and storage. Photograph this screen."],
+      ["Serial matches the bottom case", "Then enter it at checkcoverage.apple.com to confirm the model and any AppleCare."],
+      ["Battery: System Settings > Battery > Battery Health", "Look for \"Normal\" and a maximum capacity above about 85%."],
+      ["Cycle count", "Hold Option, Apple menu > System Information > Power. Under a few hundred is good for a laptop a few years old."],
+      ["Seller signs out of their Apple Account and turns off Find My", "In System Settings, at the top of the sidebar."],
+      ["Seller runs Erase All Content and Settings", "System Settings > General > Transfer or Reset. It should restart to the \"Hello\" setup screen with no lock or management screen."],
+      ["Type every key and test the trackpad", "Open Notes and type the alphabet. Press the trackpad hard to check force click."],
+      ["Screen: look at full white and full black", "No dead pixels, stains, or peeling coating near the edges."],
+      ["Charge from your charger, and try each port", "Charging icon appears. Plug something into every USB-C port."],
+      ["Speakers, camera, Wi-Fi", "Play a sound, open Photo Booth, join your phone's hotspot."],
+    ],
+  },
+  {
+    id: "printer", chip: "Photo printer", title: "Pigment photo printer",
+    lede: "Canon PRO series or Epson SureColor. The printhead is the thing you're buying.",
+    bring: ["3 to 5 sheets of your own photo paper", "A car or a helper. These printers are heavy and bulky"],
+    stop: [
+      "Seller won't power it on and print a nozzle check",
+      "Nozzle check still has gaps after one cleaning cycle",
+      "Printhead or ink system error codes",
+      "Dried ink pooled in the paper path or under the printer",
+    ],
+    checks: [
+      ["Print a nozzle check from the printer's maintenance menu", "Every color pattern should be complete with no gaps or broken lines."],
+      ["If there are gaps: one head cleaning, then reprint", "One cleaning is fair. If gaps remain, walk or price it as a parts unit."],
+      ["Check ink levels on the screen", "Pigment sets are expensive. Low or missing cartridges cut the value."],
+      ["Check the maintenance cartridge or box level", "A full one needs replacing soon. It's a cost to factor in."],
+      ["Feed a sheet of your photo paper and print one image", "Look for streaks, banding or roller marks."],
+      ["Ask how long it sat unused", "Months idle is the main cause of clogged heads."],
+      ["Ask for the original packing or shipping locks if you'll move it far", "Moving with ink installed can leak."],
+    ],
+  },
+  {
+    id: "glasses", chip: "Smart glasses", title: "Meta smart glasses",
+    lede: "Account-bound. The batteries can't be replaced and wear out with age.",
+    bring: ["Your phone with the Meta AI app installed and signed in"],
+    stop: [
+      "Seller won't remove them from their Meta account and factory reset in front of you",
+      "They won't pair to your phone",
+      "Case doesn't charge the glasses, or the glasses die in a few minutes",
+      "Prescription lenses fitted that aren't yours (unless the price reflects replacing them)",
+    ],
+    checks: [
+      ["Confirm the model and generation", "Check the inside of the arm and the listing. Generation changes the price a lot."],
+      ["Seller removes them from their Meta AI app", "Then factory reset them while you watch."],
+      ["Pair them to your phone in the Meta AI app", "Do this before paying. It proves the reset worked."],
+      ["Take a photo and a short video, and play music", "Check the photo syncs to your phone and both speakers work."],
+      ["Try a voice command", "Tests the microphones."],
+      ["Put them in the case and watch the charge light", "The case should charge the glasses."],
+      ["Hinges, frame and lenses", "No cracks at the hinges, no deep lens scratches."],
+      ["Ask how old they are and how long a charge lasts", "Older units have weaker batteries."],
+    ],
+  },
+  {
+    id: "eightsleep", chip: "Eight Sleep", title: "Eight Sleep Pod (King)",
+    lede: "Account-bound, and the hub matters as much as the cover.",
+    bring: ["Your phone with the Eight Sleep app", "A tape measure if size isn't printed on the tag"],
+    stop: [
+      "No hub, or a cover-only listing priced like a full system",
+      "Seller won't remove it from their account in front of you",
+      "Hub won't power on, or the water system leaks",
+      "Tears or punctures in the cover",
+    ],
+    checks: [
+      ["Confirm generation (Pod 3, 4 or 5) and that it's King", "Check the tag on the cover and the label on the hub. Size and generation change the price a lot."],
+      ["Confirm what's included", "Cover plus hub, the hoses, and the power cable. Cover-only is worth far less."],
+      ["See it running before you pay", "Ask the seller to have it set up. Feel the cover warm up and cool down over a few minutes."],
+      ["Look for leaks around the hoses and the hub", "Check under the hub and along the hose connections."],
+      ["Look over the cover for tears, stains and smell", "Check the edges where hoses connect."],
+      ["Seller removes it from their Eight Sleep account", "Ask them to reset the hub so it's ready to pair to yours."],
+      ["Ask what the membership covers for a second owner", "Check Eight Sleep's current terms before you go, since some features need a membership."],
+    ],
+  },
+  {
+    id: "matic", chip: "Matic vacuum", title: "Matic robot vacuum",
+    lede: "App-bound like the other smart devices.",
+    bring: ["Your phone with the Matic app installed"],
+    stop: [
+      "Seller won't remove it from their account and reset it",
+      "Won't power on or charge",
+      "Dead or rattling brush motor",
+    ],
+    checks: [
+      ["Confirm what's included", "Robot, charging base, power cable, spare bags or filters if listed."],
+      ["Power it on and let it drive and vacuum a few feet", "Listen for grinding. Check the brush spins."],
+      ["Check the cameras and sensors are clean and uncracked", "It navigates by camera, so a scratched lens matters."],
+      ["Place it on the charging base and confirm it charges", "Watch for the charging indicator."],
+      ["Look at the brushes, wheels and bin or bag area", "Hair wrapped tight is normal. Cracked wheels or a broken latch are not."],
+      ["Seller removes it from their app account and resets it", "Then confirm it shows up as a new device on your phone."],
+      ["Ask about battery age and runtime", "A short runtime means a battery replacement soon."],
+    ],
+  },
+  {
+    id: "espresso", chip: "Espresso", title: "High-end espresso machine",
+    lede: "You want to see it hot and pulling a shot.",
+    bring: ["A small bag of your beans, or ask the seller to have some", "A towel, and a car for a heavy machine"],
+    stop: [
+      "Seller won't heat it up before you arrive",
+      "Water under the machine or dripping from inside the case",
+      "Heavy scale crust in the tank or around the group head",
+      "Pressure gauge doesn't move, or the pump screams or stalls",
+    ],
+    checks: [
+      ["Ask the seller to switch it on 30 minutes before you arrive", "Many machines take 20 to 30 minutes to fully heat."],
+      ["Pull a shot and watch the brew gauge, if it has one", "It should rise to its usual range, about 9 bar on most machines, and hold steady."],
+      ["Steam a little water or milk", "Strong, dry steam. Weak or sputtering steam suggests scale or a heater problem."],
+      ["Look in the water tank and around the group head", "White or green crust means heavy scale. Ask when it was last descaled and with what."],
+      ["Feel the group gasket", "It should be soft. Hard or cracked is a cheap fix but a sign of neglect."],
+      ["Check underneath and inside the drip tray area", "Water outside the drip tray is a leak."],
+      ["Confirm accessories", "Portafilter, single and double baskets, tamper, and blind basket if listed."],
+      ["Ask about service history and water", "Filtered or soft water and regular descaling mean a longer life."],
+    ],
+  },
+  {
+    id: "brush", chip: "Shave brush", title: "Artisan badger shaving brush",
+    lede: "Mostly about the knot and the glue.",
+    bring: ["Nothing special. Clean hands"],
+    stop: [
+      "The knot wobbles or pulls out of the handle (glue failure)",
+      "Heavy shedding when you swirl it",
+      "Cracks in the handle around the knot",
+      "Used, with a sour or musty smell",
+    ],
+    checks: [
+      ["Maker's mark on the handle matches the listing", "Look for the maker's name or stamp and the knot size if stated."],
+      ["Gently tug the knot and press it side to side", "It should feel solid with no movement at the base."],
+      ["Swirl it on your palm 20 times", "One or two hairs is normal. A small pile is not."],
+      ["Look closely at the handle near the knot", "No cracks, no gaps in the glue line."],
+      ["Smell it", "New badger can smell earthy. Used and sour means bacteria in the knot."],
+      ["Ask whether it's new or used, and how it was cleaned", "Used brushes are a hygiene call. Price them lower."],
+    ],
+  },
+  {
+    id: "soft", chip: "Bags & vintage", title: "Baggu bags and vintage clothing",
+    lede: "Authenticity first, condition second. Use the listing check for screenshots before you go.",
+    bring: ["Your own measurements written down (chest, waist, length)", "A soft tape measure"],
+    stop: [
+      "Tags, labels or logos that look printed wrong, blurry or in the wrong font",
+      "Condition much worse than the photos showed",
+      "Seller won't let you look inside or check tags",
+    ],
+    checks: [
+      ["Find the tags and brand label", "Check spelling, font, stitching around the label and the care tag."],
+      ["Check the stitching", "Even, tight stitches. Loose threads at stress points mean it won't last."],
+      ["Look at stress spots", "Armpits, collar, cuffs, crotch, handles and strap joins."],
+      ["Check zippers, buttons and snaps", "Run every zipper end to end."],
+      ["Hold it up to the light", "Shows thin spots, small holes and moth damage."],
+      ["Measure against your own numbers", "Vintage sizes run small. The tag size doesn't matter, the tape does."],
+      ["Smell it", "Smoke, mildew and perfume can be hard to wash out."],
+    ],
+  },
+];
+
+const KEY = "pickup-cards-v1";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+const chips = document.getElementById("chips");
+const host = document.getElementById("card");
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" })[c]); }
+
+chips.innerHTML = CARDS.map(c => `<a href="#${c.id}" data-id="${c.id}">${esc(c.chip)}</a>`).join("");
+
+function current() {
+  const id = (location.hash || "").slice(1);
+  return CARDS.find(c => c.id === id) || CARDS[0];
+}
+
+function dealReadout() {
+  const d = state.deal || {};
+  const ask = parseFloat(d.ask), p50 = parseFloat(d.p50), max = parseFloat(d.max);
+  const out = [];
+  let cls = "";
+  if (ask > 0 && p50 > 0) {
+    const pct = Math.round((1 - ask / p50) * 100);
+    out.push(pct >= 0 ? `Ask is ${pct}% below p50` : `Ask is ${-pct}% above p50`);
+    if (pct > 30) { out.push("clears the 30% steal bar"); cls = "good"; }
+  }
+  if (ask > 0 && max > 0 && ask > max) { out.push(`$${Math.round(ask - max)} over your walk-away`); cls = "bad"; }
+  return { text: out.join(", ") || "Enter the ask and the used p50 to see the gap.", cls };
+}
+
+function render() {
+  const c = current();
+  chips.querySelectorAll("a").forEach(a => {
+    const on = a.dataset.id === c.id;
+    a.setAttribute("aria-current", on ? "true" : "false");
+    if (on) a.scrollIntoView({ block: "nearest", inline: "center" });
+  });
+  const ticks = state[c.id] || {};
+  const done = c.checks.filter((_, i) => ticks[i]).length;
+  const r = c.deal ? dealReadout() : null;
+  const d = state.deal || {};
+  host.innerHTML = `
+  <article class="tag" aria-labelledby="t-${c.id}">
+    <div class="tag-head">
+      <h2 id="t-${c.id}">${esc(c.title)}</h2>
+      <span class="count ${done === c.checks.length ? "all" : ""}" id="count">${done}/${c.checks.length}</span>
+    </div>
+    <p class="lede">${esc(c.lede)}</p>
+    ${c.bring ? `<section class="section"><h3>Bring</h3><ul class="plain">${c.bring.map(b => `<li>${esc(b)}</li>`).join("")}</ul></section>` : ""}
+    <section class="stop"><h3>Walk away if</h3><ul>${c.stop.map(s => `<li>${esc(s)}</li>`).join("")}</ul></section>
+    <section class="section"><h3>Check</h3>
+      <ul class="checks">${c.checks.map(([t, how], i) => `
+        <li><label for="ck-${c.id}-${i}"><input type="checkbox" id="ck-${c.id}-${i}" data-i="${i}" ${ticks[i] ? "checked" : ""}>
+        <span><b>${esc(t)}</b><span class="how">${esc(how)}</span></span></label></li>`).join("")}
+      </ul>
+    </section>
+    ${c.deal ? `<section class="section"><h3>Deal line</h3>
+      <div class="deal">
+        <label for="d-ask">Ask $<input id="d-ask" inputmode="decimal" data-k="ask" value="${esc(d.ask || "")}"></label>
+        <label for="d-p50">Used p50 $<input id="d-p50" inputmode="decimal" data-k="p50" value="${esc(d.p50 || "")}"></label>
+        <label for="d-max">Walk-away $<input id="d-max" inputmode="decimal" data-k="max" value="${esc(d.max || "")}"></label>
+      </div>
+      <p class="readout ${r.cls}" id="readout">${esc(r.text)}</p>
+    </section>` : ""}
+    <div class="foot"><small>${done === c.checks.length ? "All checked. OK to pay." : "Pay only when every box is ticked."}</small>
+      <button class="reset" id="reset" type="button">Clear this card</button></div>
+  </article>`;
+}
+
+host.addEventListener("change", e => {
+  const el = e.target;
+  if (el.matches(".checks input")) {
+    const c = current();
+    state[c.id] = state[c.id] || {};
+    state[c.id][el.dataset.i] = el.checked;
+    save(); render();
+    const again = document.getElementById(el.id); if (again) again.focus();
+  }
+});
+host.addEventListener("input", e => {
+  const el = e.target;
+  if (el.dataset.k) {
+    state.deal = state.deal || {};
+    state.deal[el.dataset.k] = el.value.replace(/[^0-9.]/g, "");
+    save();
+    const r = dealReadout(), o = document.getElementById("readout");
+    o.textContent = r.text; o.className = "readout " + r.cls;
+  }
+});
+host.addEventListener("click", e => {
+  if (e.target.id === "reset") {
+    const c = current();
+    delete state[c.id];
+    if (c.deal) delete state.deal;
+    save(); render();
+  }
+});
+window.addEventListener("hashchange", () => { render(); window.scrollTo(0, 0); });
+render();
+</script>
+
+</body>
+</html>
