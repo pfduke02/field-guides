@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}
+.home{display:inline-block;margin:14px 0 0;font:500 .85rem/1 system-ui,sans-serif;text-decoration:none;color:inherit;opacity:.7}.home:hover{opacity:1}</style>
+<meta name="description" content="Pocket cards for shooting with a Canon R50, inspecting used Marketplace pickups, and 3D-print fits.">
+<title>Field Guides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: a pocket index. One narrow column, grouped by where you are (shooting, buying, making); each guide is a tappable row with its status. */
+:root{
+  --bg:#eef1f4; --card:#ffffff; --fg:#141a21; --muted:#5a6573; --line:#d7dde4;
+  --lcd:#1b2128; --lcd-fg:#e9f0e6; --lcd-dim:#8f9a8c;
+  --accent:#d8442b; --accent-soft:#fbe6e1; --ok:#2f7d4f; --warn:#9a6a00;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1317; --card:#171d23; --fg:#e8edf2; --muted:#9aa6b3; --line:#2a333d;
+  --lcd:#070a0d; --lcd-fg:#dff0d6; --lcd-dim:#7f8f7a;
+  --accent:#ff6a4d; --accent-soft:#3a1d17; --ok:#5cc289; --warn:#e0b04a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1317; --card:#171d23; --fg:#e8edf2; --muted:#9aa6b3; --line:#2a333d;
+  --lcd:#070a0d; --lcd-fg:#dff0d6; --lcd-dim:#7f8f7a;
+  --accent:#ff6a4d; --accent-soft:#3a1d17; --ok:#5cc289; --warn:#e0b04a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header h1{font:700 2.2rem/1 var(--display);margin:0;text-wrap:balance}
+header p{margin:6px 0 0;color:var(--muted);font-size:.9rem}
+.eyebrow{font:600 .72rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+section{display:flex;flex-direction:column;gap:10px}
+section > h2{font:700 1.35rem/1 var(--display);margin:6px 0 0;display:flex;align-items:baseline;gap:10px}
+section > h2 span{font:500 .78rem/1 var(--body);color:var(--muted)}
+a.guide{display:flex;flex-direction:column;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;color:var(--fg);text-decoration:none}
+a.guide:hover,a.guide:focus-visible{border-color:var(--accent);outline:none}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.row b{font:700 1.2rem/1.1 var(--display);letter-spacing:.01em}
+.row .go{font-family:var(--mono);color:var(--accent);flex:none}
+.what{color:var(--muted);font-size:.88rem;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 .72rem/1 var(--body);border-radius:999px;padding:5px 8px;border:1px solid var(--line);color:var(--muted)}
+.chip.ok{color:var(--ok);border-color:currentColor}
+.chip.todo{color:var(--warn);border-color:currentColor}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.card h3{font:700 1.3rem/1.05 var(--display);margin:0}
+.lcd{background:var(--lcd);color:var(--lcd-fg);border-radius:10px;padding:12px 14px;font-family:var(--mono);display:flex;flex-wrap:wrap;gap:6px 18px}
+.lcd .v{font-weight:700;font-size:1.1rem}
+.lcd .k{display:block;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--lcd-dim)}
+.tablebox{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.84rem;font-variant-numeric:tabular-nums}
+th,td{padding:6px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500;white-space:nowrap}
+td.m{font-family:var(--mono);white-space:nowrap}
+.why{background:var(--accent-soft);border-radius:10px;padding:10px 12px;font-size:.86rem}
+.note{font-size:.78rem;color:var(--muted);margin:0}
+footer{font-size:.78rem;color:var(--muted)} footer p{margin:0 0 6px}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Pocket cards</div>
+  <h1>Field guides</h1>
+  <p>Quick cards for when you're out shooting, picking up something used, or at the printer. Tap a guide to open it.</p>
+</header>
+
+<section aria-labelledby="h-shoot">
+  <h2 id="h-shoot">Shooting <span>Canon R50 · M50</span></h2>
+  <a class="guide" href="/camera-cards/">
+    <div class="row"><b>R50 / M50 field cards</b><span class="go">open &rarr;</span></div>
+    <p class="what">Six cards: Av not Auto, up close, dim rooms, tricky light, people, RAW for hard light. Built from 171 of your own shots.</p>
+    <div class="chips"><span class="chip ok">Built Nov 21</span><span class="chip">6 cards + one-glance</span></div>
+  </a>
+</section>
+
+<section aria-labelledby="h-buy">
+  <h2 id="h-buy">Buying used <span>Marketplace pickups</span></h2>
+  <a class="guide" href="/pickup-cards/">
+    <div class="row"><b>Pickup inspection cards</b><span class="go">open &rarr;</span></div>
+    <p class="what">Tick-box checks for 13 kinds of item, from RF and EF lenses and camera bodies to a MacBook Pro, espresso machine and Eight Sleep, with a walk-away price line.</p>
+    <div class="chips"><span class="chip ok">Built Nov 21</span><span class="chip todo">Not used at a real pickup yet</span></div>
+  </a>
+</section>
+
+<section aria-labelledby="h-make">
+  <h2 id="h-make">Making <span>3D-print fit kit</span></h2>
+  <div class="card" id="print">
+    <h3>Find your printer's fits once</h3>
+    <div class="lcd"><span><span class="k">Layers</span><span class="v">0.2 mm</span></span><span><span class="k">Walls</span><span class="v">3</span></span><span><span class="k">Infill</span><span class="v">15–20%</span></span><span><span class="k">Supports / brim</span><span class="v">off</span></span></div>
+    <div class="why">Only printing one thing tonight? Print the <b>holes</b> test. It answers the most questions with the least plastic.</div>
+    <div class="tablebox">
+      <table aria-label="Test print order">
+        <thead><tr><th>Print</th><th>Time</th><th>What to note</th></tr></thead>
+        <tbody>
+          <tr><td>Cube</td><td class="m">~25 min</td><td>X, Y, Z within 20.00 ± 0.15 mm, or fix the printer first</td></tr>
+          <tr><td>Holes</td><td class="m">~30 min</td><td>First hole that's a firm push, a slide, a free spin</td></tr>
+          <tr><td>Slots</td><td class="m">~20 min</td><td>First slot the key slides into with slight drag</td></tr>
+          <tr><td>Screws</td><td class="m">~20 min</td><td>C row: screw passes. T row: screw cuts a thread</td></tr>
+          <tr><td>Lid</td><td class="m">~40 min</td><td>Lid that lifts the rim but pulls off by hand</td></tr>
+          <tr><td>Gauge</td><td class="m">~25 min</td><td>Smallest notch each cable drops into</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Labels on each test are clearance in mm (".15" = 0.15 mm wider than the peg). Note the first size that fits for each test and reuse it in every design.</p>
+    <div class="chips"><span class="chip ok">Built Nov 20</span><span class="chip todo">Not printed yet</span></div>
+  </div>
+</section>
+
+<footer>
+  <p>New guides get added here as they're made. Tick boxes and numbers you enter stay on your own device.</p>
+</footer>
+</div>
+
+</body>
+</html>
