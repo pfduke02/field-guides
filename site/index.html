@@ -70,10 +70,12 @@ footer{font-size:.78rem;color:var(--muted)} footer p{margin:0 0 6px}
   <div class="eyebrow">Pocket cards</div>
   <h1>Field guides</h1>
   <p>Quick cards for when you're out shooting, picking up something used, or at the printer. Tap a guide to open it.</p>
+  <p id="offline-status" role="status">For offline use, open this page online and wait for the download confirmation. Keep this browser's site data; test once in airplane mode before leaving.</p>
 </header>
 
 <section aria-labelledby="h-shoot">
   <h2 id="h-shoot">Shooting <span>Canon R50 · M50</span></h2>
+  <a class="guide" href="/field-notes/"><div class="row"><b>Outings, motion &amp; microphone</b><span class="go">open &rarr;</span></div><p class="what">Draft field cards, packing reminders, and local notes.</p></a>
   <a class="guide" href="/camera-cards/">
     <div class="row"><b>R50 / M50 field cards</b><span class="go">open &rarr;</span></div>
     <p class="what">Six cards: Av not Auto, up close, dim rooms, tricky light, people, RAW for hard light. Built from 171 of your own shots.</p>
@@ -119,5 +121,6 @@ footer{font-size:.78rem;color:var(--muted)} footer p{margin:0 0 6px}
 </footer>
 </div>
 
+<script src="/offline.js" defer></script>
 </body>
 </html>

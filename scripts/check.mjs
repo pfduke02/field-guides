@@ -4,10 +4,11 @@ import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { join, extname } from 'node:path';
 import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
 const require = createRequire(import.meta.url);
 const { chromium, devices } = require('playwright');
 
-const root = new URL('../site/', import.meta.url).pathname;
+const root = fileURLToPath(new URL('../site/', import.meta.url));
 const types = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.png': 'image/png' };
 let base = process.argv[2], server;
 if (!base) {
@@ -18,8 +19,8 @@ if (!base) {
   }).listen(0);
   base = `http://localhost:${server.address().port}`;
 }
-const pages = ['/', '/pickup-cards/', '/camera-cards/'];
-const browser = await chromium.launch();
+const pages = ['/', '/pickup-cards/', '/camera-cards/', '/field-notes/'];
+const browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
 let failed = 0;
 for (const scheme of ['light', 'dark']) {
   const ctx = await browser.newContext({ ...devices['iPhone 13'], colorScheme: scheme });
@@ -42,6 +43,28 @@ for (const scheme of ['light', 'dark']) {
   }
   await ctx.close();
 }
+const ctx = await browser.newContext({ ...devices['iPhone 13'] });
+const page = await ctx.newPage();
+await page.goto(base + '/');
+await page.getByText('Offline download ready', { exact: false }).waitFor();
+await page.goto(base + '/pickup-cards/');
+const checkbox = page.locator('input[type=checkbox]').first();
+await checkbox.check();
+await page.reload();
+if (!await checkbox.isChecked()) throw new Error('Pickup checkbox did not persist');
+await page.goto(base + '/field-notes/');
+await page.locator('#note').fill('field test');
+await page.reload();
+if (await page.locator('#note').inputValue() !== 'field test') throw new Error('Notes did not persist');
+await ctx.setOffline(true);
+for (const path of pages) {
+  const response = await page.goto(base + path);
+  if (!response?.ok()) throw new Error(`Offline reload failed: ${path}`);
+}
+await page.goto(base + '/pickup-cards/');
+if (!await page.locator('input[type=checkbox]').first().isChecked()) throw new Error('Pickup data lost offline');
+console.log('PASS offline reload, pickup persistence, and notes persistence');
+await ctx.close();
 await browser.close();
 server?.close();
 process.exit(failed ? 1 : 0);
